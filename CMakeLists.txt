@@ -40,7 +40,8 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(glaze)
 
-add_executable(Pong main.cpp
+add_executable(Pong
+        src/main.cpp
         src/core/Game.cpp
         src/core/Game.h
         src/core/Layer.cpp
