@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 4.0)
-project(Pong)
+project(Pongo)
 
 set(CMAKE_CXX_STANDARD 23)
 include(FetchContent)
@@ -40,7 +40,7 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(glaze)
 
-add_executable(Pong
+add_executable(${PROJECT_NAME}
         src/main.cpp
         src/core/Game.cpp
         src/core/Game.h
@@ -74,7 +74,7 @@ else ()
 endif ()
 
 add_custom_command(
-        TARGET Pong POST_BUILD COMMAND
+        TARGET ${PROJECT_NAME} POST_BUILD COMMAND
         ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_CURRENT_LIST_DIR}/assets
         ${CMAKE_CURRENT_BINARY_DIR}/assets
