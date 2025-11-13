@@ -36,13 +36,13 @@ Window::~Window()
     m_Window = nullptr;
 }
 
-void Window::BeginFrame()
+void Window::BeginFrame() const
 {
     SDL_SetRenderDrawColor(m_Renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(m_Renderer);
 }
 
-void Window::EndFrame()
+void Window::EndFrame() const
 {
     SDL_RenderPresent(m_Renderer);
 }

@@ -26,7 +26,6 @@ Game& Game::GetInstance()
 
 void Game::Initialize()
 {
-
     m_Window = std::make_unique<Window>(m_Properties.Title.c_str(), m_Properties.Width, m_Properties.Height);
 
     SDL_GetCurrentRenderOutputSize(m_Window->GetRenderer(), &m_Properties.Width, &m_Properties.Height);
@@ -86,8 +85,4 @@ void Game::Shutdown()
 {
     AudioSystem::Shutdown();
     ResourceManager::Destroy();
-
-    m_Window.reset();
-
-    SDL_Quit();
 }

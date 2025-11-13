@@ -70,6 +70,8 @@ void SDL_AppQuit(void* appstate, SDL_AppResult result)
         game->Shutdown();
 
         delete game;
+
+        SDL_Quit();
     }
     catch (std::exception& e) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s", e.what());

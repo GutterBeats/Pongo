@@ -16,8 +16,8 @@ public:
     explicit Window(const char* title, int width, int height);
     ~Window();
 
-    void BeginFrame();
-    void EndFrame();
+    void BeginFrame() const;
+    void EndFrame() const;
 
     [[nodiscard]] SDL_Renderer* GetRenderer() const { return m_Renderer; }
 };
