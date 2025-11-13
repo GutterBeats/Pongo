@@ -41,11 +41,16 @@ Window::~Window()
 
 void Window::BeginFrame() const
 {
-    SDL_SetRenderDrawColor(m_Renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+    SDL_SetRenderDrawColor(m_Renderer, 0xDE, 0x54, 0x1E, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(m_Renderer);
 }
 
 void Window::EndFrame() const
 {
     SDL_RenderPresent(m_Renderer);
+}
+
+void Window::RenderTexture(const TexturePtr& texture, const SDL_FRect* sourceRect, const SDL_FRect* destRect) const
+{
+    SDL_RenderTexture(m_Renderer, texture.get(), sourceRect, destRect);
 }
