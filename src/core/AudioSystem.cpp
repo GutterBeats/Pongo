@@ -50,7 +50,7 @@ AudioSystem& AudioSystem::GetInstance()
 
 bool AudioSystem::Initialize()
 {
-    AudioEngine* engine = new AudioEngine();
+    auto* engine = new AudioEngine();
 
     FMOD_RESULT result = FMOD::System_Create(&engine->System);
     if (result != FMOD_OK) {
@@ -109,7 +109,7 @@ void AudioSystem::PlayMusic(const std::string& path)
         }
     }
 
-    AudioFile* soundFile = new AudioFile();
+    auto* soundFile = new AudioFile();
     soundFile->IsMusic = true;
 
     FMOD_RESULT result = m_Engine->System->createStream(path.c_str(), FMOD_2D | FMOD_LOOP_NORMAL, nullptr, &soundFile->Sound);
@@ -133,6 +133,16 @@ void AudioSystem::PlayMusic(const std::string& path)
     m_Files[path] = soundFile;
 }
 
+void AudioSystem::PauseMusic() const
+{
+    m_Engine->MusicChannelGroup->setPaused(true);
+}
+
+void AudioSystem::ResumeMusic() const
+{
+    m_Engine->MusicChannelGroup->setPaused(false);
+}
+
 void AudioSystem::StopMusic() const
 {
     m_Engine->MusicChannelGroup->stop();
@@ -152,7 +162,7 @@ void AudioSystem::PlaySFX(const std::string& path)
         return;
     }
 
-    AudioFile* soundFile = new AudioFile();
+    auto* soundFile = new AudioFile();
     const FMOD_RESULT result = m_Engine->System->createSound(path.c_str(), FMOD_2D, nullptr, &soundFile->Sound);
 
     if (result != FMOD_OK) {

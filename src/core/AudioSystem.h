@@ -23,6 +23,8 @@ public:
     static void Tick();
 
     void PlayMusic(const std::string& path);
+    void PauseMusic() const;
+    void ResumeMusic() const;
     void StopMusic() const;
     void PlaySFX(const std::string& path);
 
