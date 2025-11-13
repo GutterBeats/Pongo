@@ -6,16 +6,15 @@
 
 #include <memory>
 #include <string>
-#include <vector>
 
-#include "Layer.h"
+#include "Window.h"
 
 #include "SDL3/SDL.h"
 
 struct GameProps
 {
-    uint16_t Width;
-    uint16_t Height;
+    int Width;
+    int Height;
     std::string Title;
 };
 
@@ -25,11 +24,7 @@ class Game final
     bool m_IsRunning = false;
     uint64_t m_LastTickTime = 0;
 
-    SDL_Window* m_Window = nullptr;
-    SDL_Renderer* m_Renderer = nullptr;
-    class AudioSystem* m_AudioSystem = nullptr;
-
-    std::vector<std::unique_ptr<Layer>> m_Layers;
+    std::unique_ptr<Window> m_Window;
 
 public:
     explicit Game(GameProps gameProps);
@@ -42,4 +37,5 @@ public:
     void Shutdown();
 
     [[nodiscard]] bool IsRunning() const { return m_IsRunning; }
+    [[nodiscard]] GameProps GetProps() const { return m_Properties; }
 };

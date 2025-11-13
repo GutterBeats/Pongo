@@ -44,19 +44,15 @@ add_executable(${PROJECT_NAME}
         src/main.cpp
         src/core/Game.cpp
         src/core/Game.h
-        src/core/Layer.cpp
-        src/core/Layer.h
-        src/core/Entity.cpp
-        src/core/Entity.h
-        src/gameplay/Layers/MainMenu.cpp
-        src/gameplay/Layers/MainMenu.h
         src/core/ResourceManager.cpp
         src/core/ResourceManager.h
-        assets/Assets.h
+        src/core/Assets.h
         src/core/AudioSystem.cpp
         src/core/AudioSystem.h
-        src/core/Utils.h)
-
+        src/core/Utils.h
+        src/core/Window.cpp
+        src/core/Window.h
+)
 target_include_directories(${PROJECT_NAME} PRIVATE src assets ${VENDOR_DIR})
 target_link_directories(${PROJECT_NAME} PRIVATE "${VENDOR_DIR}/fmod/lib")
 
