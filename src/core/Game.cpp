@@ -20,7 +20,6 @@ void Game::Initialize()
 {
     m_Window = std::make_unique<Window>(m_Properties.Title.c_str(), m_Properties.Width, m_Properties.Height);
 
-    SDL_GetCurrentRenderOutputSize(m_Window->GetRenderer(), &m_Properties.Width, &m_Properties.Height);
     if (!ResourceManager::Initialize(m_Window->GetRenderer())) {
         return;
     }

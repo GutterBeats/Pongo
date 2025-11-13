@@ -9,6 +9,7 @@
 #include "SDL3/SDL_log.h"
 
 Window::Window(const char* title, const int width, const int height)
+    : m_Width(width), m_Height(height)
 {
     const bool created = SDL_CreateWindowAndRenderer(
         title,
@@ -25,6 +26,8 @@ Window::Window(const char* title, const int width, const int height)
 
         throw std::runtime_error(error);
     }
+
+    SDL_GetCurrentRenderOutputSize(m_Renderer, &m_Width, &m_Height);
 }
 
 Window::~Window()

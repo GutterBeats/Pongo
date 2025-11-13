@@ -12,6 +12,9 @@ class Window final
     SDL_Window* m_Window = nullptr;
     SDL_Renderer* m_Renderer = nullptr;
 
+    int m_Width;
+    int m_Height;
+
 public:
     explicit Window(const char* title, int width, int height);
     ~Window();
