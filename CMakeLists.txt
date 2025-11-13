@@ -52,6 +52,9 @@ add_executable(${PROJECT_NAME}
         src/core/Utils.h
         src/core/Window.cpp
         src/core/Window.h
+        src/levels/MainMenu.cpp
+        src/levels/MainMenu.h
+        src/core/Level.h
 )
 target_include_directories(${PROJECT_NAME} PRIVATE src assets ${VENDOR_DIR})
 target_link_directories(${PROJECT_NAME} PRIVATE "${VENDOR_DIR}/fmod/lib")

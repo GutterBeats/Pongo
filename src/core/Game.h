@@ -6,9 +6,10 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 
+#include "Level.h"
 #include "Window.h"
-
 #include "SDL3/SDL.h"
 
 struct GameProps
@@ -25,6 +26,9 @@ class Game final
     uint64_t m_LastTickTime = 0;
 
     std::unique_ptr<Window> m_Window;
+    std::vector<std::unique_ptr<Level>> m_Levels;
+
+    std::unique_ptr<Level> m_CurrentLevel;
 
 public:
     explicit Game(GameProps gameProps);

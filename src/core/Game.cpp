@@ -10,6 +10,7 @@
 #include "AudioSystem.h"
 #include "ResourceManager.h"
 #include "Window.h"
+#include "levels/MainMenu.h"
 
 Game::Game(GameProps gameProps)
     : m_Properties(std::move(gameProps))
@@ -30,6 +31,10 @@ void Game::Initialize()
 
     m_IsRunning = true;
     m_LastTickTime = SDL_GetTicks();
+
+    m_Levels.emplace_back(std::make_unique<MainMenu>());
+    m_CurrentLevel.swap(m_Levels[0]);
+    m_CurrentLevel->Initialize();
 }
 
 void Game::Update()
@@ -44,6 +49,9 @@ void Game::Update()
     }
 
     m_Window->BeginFrame();
+
+    m_CurrentLevel->Update(deltaTime);
+    m_CurrentLevel->Render(*m_Window);
 
     m_Window->EndFrame();
 
