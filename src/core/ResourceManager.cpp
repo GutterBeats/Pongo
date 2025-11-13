@@ -17,13 +17,18 @@ ResourceManager::ResourceManager(SDL_Renderer* renderer)
 {
 }
 
-void ResourceManager::Init(SDL_Renderer* renderer)
+bool ResourceManager::Initialize(SDL_Renderer* renderer)
 {
-    if (s_Instance) return;
+    if (s_Instance) return true;
 
     s_Instance = new ResourceManager(renderer);
 
-    TTF_Init();
+    if (!TTF_Init()) {
+        SDL_Log("Unable to initialize TTF System!: %s", SDL_GetError());
+        return false;
+    }
+
+    return true;
 }
 
 void ResourceManager::Destroy()

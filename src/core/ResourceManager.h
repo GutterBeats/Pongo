@@ -18,7 +18,7 @@ class ResourceManager final
     explicit ResourceManager(SDL_Renderer* renderer);
 
 public:
-    static void Init(SDL_Renderer* renderer);
+    static bool Initialize(SDL_Renderer* renderer);
     static void Destroy();
     static ResourceManager& GetInstance();
 
