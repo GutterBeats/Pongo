@@ -1,27 +1,19 @@
 //
 // Created by Anthony Lesch on 11/2/25.
 //
+// ReSharper disable CppMemberFunctionMayBeStatic
 
 #include <utility>
 
 #include "Game.h"
-
 #include "Assets.h"
 #include "AudioSystem.h"
 #include "ResourceManager.h"
 #include "Window.h"
 
-static Game* s_GameInstance;
-
 Game::Game(GameProps gameProps)
     : m_Properties(std::move(gameProps))
 {
-    s_GameInstance = this;
-}
-
-Game& Game::GetInstance()
-{
-    return *s_GameInstance;
 }
 
 void Game::Initialize()

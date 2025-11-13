@@ -29,13 +29,10 @@ class Game final
 public:
     explicit Game(GameProps gameProps);
 
-    static Game& GetInstance();
-
     void Initialize();
     void Update();
     void OnEvent(const SDL_Event& event);
     void Shutdown();
 
     [[nodiscard]] bool IsRunning() const { return m_IsRunning; }
-    [[nodiscard]] GameProps GetProps() const { return m_Properties; }
 };
