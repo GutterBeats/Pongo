@@ -74,7 +74,7 @@ TexturePtr ResourceManager::LoadText(const std::string& text, const float fontSi
     }
 
     if (!s_Instance->m_Fonts.contains(fontSize)) {
-        s_Instance->m_Fonts[fontSize] = TTF_OpenFont(Assets::Fonts::MAPLE_MONO.data(), fontSize);
+        s_Instance->m_Fonts[fontSize] = TTF_OpenFont(Assets::Fonts::MAPLE_MONO, fontSize);
     }
 
     SDL_Surface* surface = TTF_RenderText_Solid(s_Instance->m_Fonts[fontSize], text.c_str(), text.length(), { 0, 0, 0, 255 });

@@ -12,11 +12,11 @@
 
 void MainMenu::Initialize()
 {
-    m_Background = ResourceManager::GetTexture(Assets::Textures::BACKGROUND.data());
-    m_Logo = ResourceManager::GetTexture(Assets::Textures::LOGO.data());
-    m_Table = ResourceManager::GetTexture(Assets::Textures::TABLE.data());
+    m_Background = ResourceManager::GetTexture(Assets::Textures::BACKGROUND);
+    m_Logo = ResourceManager::GetTexture(Assets::Textures::LOGO);
+    m_Table = ResourceManager::GetTexture(Assets::Textures::TABLE);
 
-    AudioSystem::GetInstance().PlayMusic(Assets::Audio::DANGEROUS_CIRCUITS.data());
+    AudioSystem::GetInstance().PlayMusic(Assets::Audio::DANGEROUS_CIRCUITS);
 }
 
 void MainMenu::Render(Window& window)

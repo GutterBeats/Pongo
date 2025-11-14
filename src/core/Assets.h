@@ -4,38 +4,36 @@
 
 #pragma once
 
-#include <string_view>
-
 namespace Assets
 {
     namespace Textures
     {
-        static constexpr std::string_view BACKGROUND = "assets/textures/Background.png";
-        static constexpr std::string_view BALL = "assets/textures/Ball.png";
-        static constexpr std::string_view EXIT = "assets/textures/Exit.png";
-        static constexpr std::string_view EXIT_SELECTED = "assets/textures/ExitSelected.png";
-        static constexpr std::string_view LEFT_PADDLE = "assets/textures/LeftPaddle.png";
-        static constexpr std::string_view LOGO = "assets/textures/Logo.png";
-        static constexpr std::string_view OPTIONS = "assets/textures/Options.png";
-        static constexpr std::string_view OPTIONS_SELECTED = "assets/textures/OptionsSelected.png";
-        static constexpr std::string_view PLAY = "assets/textures/Play.png";
-        static constexpr std::string_view PLAY_SELECTED = "assets/textures/PlaySelected.png";
-        static constexpr std::string_view RIGHT_PADDLE = "assets/textures/RightPaddle.png";
-        static constexpr std::string_view TABLE = "assets/textures/Table.png";
+        inline const char* const BACKGROUND = "assets/textures/Background.png";
+        inline const char* const BALL = "assets/textures/Ball.png";
+        inline const char* const EXIT = "assets/textures/Exit.png";
+        inline const char* const EXIT_SELECTED = "assets/textures/ExitSelected.png";
+        inline const char* const LEFT_PADDLE = "assets/textures/LeftPaddle.png";
+        inline const char* const LOGO = "assets/textures/Logo.png";
+        inline const char* const OPTIONS = "assets/textures/Options.png";
+        inline const char* const OPTIONS_SELECTED = "assets/textures/OptionsSelected.png";
+        inline const char* const PLAY = "assets/textures/Play.png";
+        inline const char* const PLAY_SELECTED = "assets/textures/PlaySelected.png";
+        inline const char* const RIGHT_PADDLE = "assets/textures/RightPaddle.png";
+        inline const char* const TABLE = "assets/textures/Table.png";
     }
 
     namespace Sfx
     {
-        static constexpr std::string_view HIT = "assets/sfx/hit.wav";
+        inline const char* const HIT = "assets/sfx/hit.wav";
     }
 
     namespace Audio
     {
-        static constexpr std::string_view DANGEROUS_CIRCUITS = "assets/audio/DangerousCircuits.wav";
+        inline const char* const DANGEROUS_CIRCUITS = "assets/audio/DangerousCircuits.wav";
     }
 
     namespace Fonts
     {
-        static constexpr std::string_view MAPLE_MONO = "assets/fonts/MapleMono.ttf";
+        inline const char* const MAPLE_MONO = "assets/fonts/MapleMono.ttf";
     }
 }
