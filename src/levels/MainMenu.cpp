@@ -19,7 +19,7 @@ void MainMenu::Initialize()
     AudioSystem::GetInstance().PlayMusic(Assets::Audio::DANGEROUS_CIRCUITS);
 }
 
-void MainMenu::Render(Window& window)
+void MainMenu::Render(const Window& window)
 {
     const SDL_Rect dimensions = window.GetDimensions();
 

@@ -13,5 +13,5 @@ public:
 
     virtual void Initialize() = 0;
     virtual void Update(float deltaSeconds) = 0;
-    virtual void Render(Window& window) = 0;
+    virtual void Render(const Window& window) = 0;
 };

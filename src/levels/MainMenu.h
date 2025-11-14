@@ -20,5 +20,5 @@ public:
 
     void Update(float deltaSeconds) override;
 
-    void Render(Window& window) override;
+    void Render(const Window& window) override;
 };
