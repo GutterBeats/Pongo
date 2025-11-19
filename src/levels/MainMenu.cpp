@@ -17,6 +17,13 @@ void MainMenu::Initialize()
     m_Table = ResourceManager::GetTexture(Assets::Textures::TABLE);
 
     AudioSystem::GetInstance().PlayMusic(Assets::Audio::DANGEROUS_CIRCUITS);
+
+    m_IsInitialized = true;
+}
+
+bool MainMenu::IsInitialized()
+{
+    return m_IsInitialized;
 }
 
 void MainMenu::Render(const Window& window)
@@ -55,5 +62,7 @@ void MainMenu::Update(const float deltaSeconds)
 
     if (m_YPosition >= 100.f || m_YPosition <= 75.f) {
         reversed = !reversed;
+
+        AudioSystem::GetInstance().PlaySFX(Assets::Sfx::HIT);
     }
 }

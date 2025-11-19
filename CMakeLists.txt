@@ -4,6 +4,7 @@ project(Pongo)
 set(CMAKE_CXX_STANDARD 23)
 include(FetchContent)
 
+set(SDLMIXER_VENDORED ON)
 set(SDLTTF_VENDORED ON)
 set(VENDOR_DIR "${CMAKE_SOURCE_DIR}/vendor")
 
@@ -31,15 +32,6 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(SDL_ttf)
 
-# Glaze
-FetchContent_Declare(
-        glaze
-        GIT_REPOSITORY https://github.com/stephenberry/glaze.git
-        GIT_TAG main
-        GIT_SHALLOW TRUE
-)
-FetchContent_MakeAvailable(glaze)
-
 add_executable(${PROJECT_NAME}
         src/main.cpp
         src/core/Game.cpp
@@ -56,21 +48,16 @@ add_executable(${PROJECT_NAME}
         src/levels/MainMenu.h
         src/core/Level.h
 )
-target_include_directories(${PROJECT_NAME} PRIVATE src assets ${VENDOR_DIR})
-target_link_directories(${PROJECT_NAME} PRIVATE "${VENDOR_DIR}/fmod/lib")
+target_include_directories(${PROJECT_NAME} PRIVATE src assets ${VENDOR_DIR}/SDL_mixer/include)
+
+add_subdirectory("vendor/SDL_mixer")
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
         SDL3::SDL3
         SDL3_image::SDL3_image
         SDL3_ttf::SDL3_ttf
-        glaze::glaze
+        SDL3_mixer::SDL3_mixer
 )
-
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-    target_link_libraries(${PROJECT_NAME} PRIVATE fmodL)
-else ()
-    target_link_libraries(${PROJECT_NAME} PRIVATE fmod)
-endif ()
 
 add_custom_command(
         TARGET ${PROJECT_NAME} POST_BUILD COMMAND

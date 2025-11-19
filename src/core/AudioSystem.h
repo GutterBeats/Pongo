@@ -4,11 +4,14 @@
 
 #pragma once
 
+#include <memory>
 #include <string>
 #include <unordered_map>
+#include <SDL3_mixer/SDL_mixer.h>
 
 struct AudioEngine;
-struct AudioFile;
+
+using AudioPtr = std::shared_ptr<MIX_Audio>;
 
 class AudioSystem
 {
@@ -20,7 +23,6 @@ public:
 
     static bool Initialize();
     static void Shutdown();
-    static void Tick();
 
     void PlayMusic(const std::string& path);
     void PauseMusic() const;
@@ -31,15 +33,13 @@ public:
     [[nodiscard]] float GetMusicVolume() const;
     [[nodiscard]] float GetSFXVolume() const;
 
-    void SetMusicVolume(float volume);
-    void SetSFXVolume(float volume);
+    void SetMusicVolume(float volume) const;
+    void SetSFXVolume(float volume) const;
 
 private:
 
     AudioEngine* m_Engine;
+    std::unordered_map<std::string, AudioPtr> m_Files;
 
-    float m_MusicVolume = 1.f;
-    float m_SFXVolume = 1.f;
-
-    std::unordered_map<std::string, AudioFile*> m_Files;
+    AudioPtr GetOrAdd(const std::string& path);
 };

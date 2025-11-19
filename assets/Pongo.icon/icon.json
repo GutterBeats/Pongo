@@ -1,0 +1,75 @@
+{
+  "fill" : "automatic",
+  "groups" : [
+    {
+      "blur-material" : null,
+      "layers" : [
+        {
+          "image-name" : "RightPaddle.png",
+          "name" : "RightPaddle",
+          "position" : {
+            "scale" : 1,
+            "translation-in-points" : [
+              -174.3422224506494,
+              172.5
+            ]
+          }
+        },
+        {
+          "image-name" : "LeftPaddle.png",
+          "name" : "LeftPaddle",
+          "position" : {
+            "scale" : 1,
+            "translation-in-points" : [
+              172.24858461327085,
+              172.5
+            ]
+          }
+        },
+        {
+          "blend-mode" : "normal",
+          "fill" : "automatic",
+          "glass" : true,
+          "image-name" : "Logo.png",
+          "name" : "Logo",
+          "position" : {
+            "scale" : 0.38,
+            "translation-in-points" : [
+              0,
+              -146.49
+            ]
+          }
+        },
+        {
+          "hidden" : false,
+          "image-name" : "Ball.png",
+          "name" : "Ball",
+          "position" : {
+            "scale" : 1,
+            "translation-in-points" : [
+              0,
+              172.5
+            ]
+          }
+        },
+        {
+          "image-name" : "Table.png",
+          "name" : "Table"
+        }
+      ],
+      "lighting" : "combined",
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "specular" : true,
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "squares" : "shared"
+  }
+}

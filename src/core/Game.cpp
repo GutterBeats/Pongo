@@ -39,8 +39,6 @@ void Game::Initialize()
 
 void Game::Update()
 {
-    AudioSystem::Tick();
-
     const uint64_t currentTime = SDL_GetTicks();
     float deltaTime = static_cast<float>(currentTime - m_LastTickTime) / 1000.0f;
 

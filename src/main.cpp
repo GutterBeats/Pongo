@@ -10,13 +10,15 @@
 SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
 {
     try {
+        SDL_SetAppMetadata("Pongo", "1.0.0", "io.buttergeats.pongo");
+
         if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD)) {
             SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error Initializing SDL!", SDL_GetError(), nullptr);
             return SDL_APP_FAILURE;
         }
 
         Game* game = new Game({
-            1280, 720, "Pong Clone"
+            1280, 720, "Pongo"
         });
 
         game->Initialize();

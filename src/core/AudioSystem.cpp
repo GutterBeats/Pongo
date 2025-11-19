@@ -5,26 +5,19 @@
 #include "AudioSystem.h"
 
 #include <ranges>
+#include <SDL3/SDL_log.h>
 
 #include "Utils.h"
-#include "fmod/fmod.hpp"
-#include "fmod/fmod_errors.h"
-#include "SDL3/SDL_log.h"
 
 static AudioSystem* s_instance;
 
 struct AudioEngine
 {
-    FMOD::System* System = nullptr;
-    FMOD::ChannelGroup* SFXChannelGroup = nullptr;
-    FMOD::ChannelGroup* MusicChannelGroup = nullptr;
-};
-
-struct AudioFile
-{
-    FMOD::Sound* Sound = nullptr;
-    FMOD::Channel* Channel = nullptr;
-    bool IsMusic = false;
+    MIX_Mixer* Mixer;
+    MIX_Track* MusicTrack;
+    MIX_Track* SfxTrack;
+    SDL_PropertiesID MusicPropsID;
+    SDL_PropertiesID SfxPropsID;
 };
 
 AudioSystem::AudioSystem(AudioEngine* engine)
@@ -34,9 +27,11 @@ AudioSystem::AudioSystem(AudioEngine* engine)
 
 AudioSystem::~AudioSystem()
 {
-    m_Engine->SFXChannelGroup->release();
-    m_Engine->MusicChannelGroup->release();
-    m_Engine->System->release();
+    MIX_DestroyTrack(m_Engine->MusicTrack);
+    MIX_DestroyTrack(m_Engine->SfxTrack);
+    MIX_DestroyMixer(m_Engine->Mixer);
+
+    MIX_Quit();
 
     delete m_Engine;
 
@@ -50,35 +45,53 @@ AudioSystem& AudioSystem::GetInstance()
 
 bool AudioSystem::Initialize()
 {
+    if (!MIX_Init()) {
+        SDL_Log("Unable to initialize SDL_MIXER library! %s", SDL_GetError());
+        return false;
+    }
+
+    MIX_Mixer* mixer = MIX_CreateMixerDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, nullptr);
+    if (!mixer) {
+        SDL_Log("Unable to create sound mixer!: %s", SDL_GetError());
+        return false;
+    }
+
+    MIX_Track* musicTrack = MIX_CreateTrack(mixer);
+    const SDL_PropertiesID musicID = MIX_GetTrackProperties(musicTrack);
+
+    if (!musicTrack || !musicID) {
+        SDL_Log("Unable to create music track!: %s", SDL_GetError());
+        MIX_DestroyMixer(mixer);
+
+        return false;
+    }
+
+    if (!SDL_SetNumberProperty(musicID, MIX_PROP_PLAY_LOOPS_NUMBER, -1)) {
+        SDL_Log("Unable to set loop for music!: %s", SDL_GetError());
+    }
+
+    MIX_Track* sfxTrack = MIX_CreateTrack(mixer);
+    const SDL_PropertiesID sfxID = MIX_GetTrackProperties(sfxTrack);
+
+    if (!sfxTrack || !sfxID) {
+        SDL_Log("Unable to create sfx track!: %s", SDL_GetError());
+        MIX_DestroyMixer(mixer);
+
+        return false;
+    }
+
+    if (!SDL_SetNumberProperty(sfxID, MIX_PROP_PLAY_LOOPS_NUMBER, 0)) {
+        SDL_Log("Unable to set loop for music!: %s", SDL_GetError());
+    }
+
     auto* engine = new AudioEngine();
-
-    FMOD_RESULT result = FMOD::System_Create(&engine->System);
-    if (result != FMOD_OK) {
-        SDL_Log("FMOD Error! (%d) %s\n", result, FMOD_ErrorString(result));
-        return false;
-    }
-
-    result = engine->System->init(512, FMOD_INIT_NORMAL, nullptr);
-    if (result != FMOD_OK) {
-        SDL_Log("FMOD Error! (%d) %s\n", result, FMOD_ErrorString(result));
-        return false;
-    }
-
-    result = engine->System->createChannelGroup("SFX_Channels", &engine->SFXChannelGroup);
-    if (result != FMOD_OK) {
-        SDL_Log("FMOD Error! (%d) %s\n", result, FMOD_ErrorString(result));
-        return false;
-    }
-
-    result = engine->System->createChannelGroup("Music_Channels", &engine->MusicChannelGroup);
-    if (result != FMOD_OK) {
-        SDL_Log("FMOD Error! (%d) %s\n", result, FMOD_ErrorString(result));
-        return false;
-    }
+    engine->Mixer = mixer;
+    engine->MusicTrack = musicTrack;
+    engine->SfxTrack = sfxTrack;
+    engine->MusicPropsID = musicID;
+    engine->SfxPropsID = sfxID;
 
     s_instance = new AudioSystem(engine);
-    engine->SFXChannelGroup->setVolume(s_instance->m_SFXVolume);
-    engine->MusicChannelGroup->setVolume(s_instance->m_MusicVolume);
 
     return true;
 }
@@ -88,115 +101,80 @@ void AudioSystem::Shutdown()
     delete s_instance;
 }
 
-void AudioSystem::Tick()
-{
-    s_instance->m_Engine->System->update();
-}
-
 void AudioSystem::PlayMusic(const std::string& path)
 {
-    if (m_Files.contains(path)) {
-        const AudioFile* soundFile = m_Files[path];
-        bool isPlaying;
+    const AudioPtr music = GetOrAdd(path);
+    if (music == nullptr) return;
 
-        if (const FMOD_RESULT result = soundFile->Channel->isPlaying(&isPlaying); result != FMOD_OK) {
-            SDL_Log("Error getting play status for music: (%d) %s\n", result, FMOD_ErrorString(result));
-            return;
-        }
+    StopMusic();
 
-        if (!isPlaying) {
-            m_Engine->MusicChannelGroup->setPaused(true);
-        }
-    }
-
-    auto* soundFile = new AudioFile();
-    soundFile->IsMusic = true;
-
-    FMOD_RESULT result = m_Engine->System->createStream(path.c_str(), FMOD_2D | FMOD_LOOP_NORMAL, nullptr, &soundFile->Sound);
-
-    if (result != FMOD_OK) {
-        SDL_Log("Unable to create Stream (%d) %s\n", result, FMOD_ErrorString(result));
-        delete soundFile;
-
+    if (!MIX_SetTrackAudio(m_Engine->MusicTrack, music.get())) {
+        SDL_Log("Unable to set track audio!: %s", SDL_GetError());
         return;
     }
 
-    result = m_Engine->System->playSound(soundFile->Sound, m_Engine->MusicChannelGroup, false, &soundFile->Channel);
-    if (result != FMOD_OK) {
-        SDL_Log("Unable to play sound! (%d) %s", result, FMOD_ErrorString(result));
-        delete soundFile->Sound;
-        delete soundFile;
-
-        return;
-    }
-
-    m_Files[path] = soundFile;
+    MIX_PlayTrack(m_Engine->MusicTrack, m_Engine->MusicPropsID);
 }
 
 void AudioSystem::PauseMusic() const
 {
-    m_Engine->MusicChannelGroup->setPaused(true);
+    MIX_PauseTrack(m_Engine->MusicTrack);
 }
 
 void AudioSystem::ResumeMusic() const
 {
-    m_Engine->MusicChannelGroup->setPaused(false);
+    MIX_ResumeTrack(m_Engine->MusicTrack);
 }
 
 void AudioSystem::StopMusic() const
 {
-    m_Engine->MusicChannelGroup->stop();
+    MIX_StopTrack(m_Engine->MusicTrack, 63);
 }
 
 void AudioSystem::PlaySFX(const std::string& path)
 {
-    if (m_Files.contains(path)) {
-        const AudioFile* existingSound = m_Files[path];
-        if (existingSound->IsMusic) {
-            SDL_Log("Invalid SFX requested. Sound is music.");
-            return;
-        }
+    const AudioPtr audio = GetOrAdd(path);
+    if (audio == nullptr) return;
 
-        m_Engine->System->playSound(existingSound->Sound, m_Engine->SFXChannelGroup, false, nullptr);
-
+    if (!MIX_SetTrackAudio(m_Engine->SfxTrack, audio.get())) {
+        SDL_Log("Unable to set track audio!: %s", SDL_GetError());
         return;
     }
 
-    auto* soundFile = new AudioFile();
-    const FMOD_RESULT result = m_Engine->System->createSound(path.c_str(), FMOD_2D, nullptr, &soundFile->Sound);
-
-    if (result != FMOD_OK) {
-        SDL_Log("Unable to play sfx (%d) %s", result, FMOD_ErrorString(result));
-        delete soundFile;
-        return;
-    }
-
-    m_Files[path] = soundFile;
-    m_Engine->System->playSound(soundFile->Sound, m_Engine->SFXChannelGroup, false, nullptr);
+    MIX_PlayTrack(m_Engine->SfxTrack, m_Engine->SfxPropsID);
 }
 
 float AudioSystem::GetMusicVolume() const
 {
-    return m_MusicVolume;
+    return MIX_GetTrackGain(m_Engine->MusicTrack);
 }
 
 float AudioSystem::GetSFXVolume() const
 {
-    return m_SFXVolume;
+    return MIX_GetTrackGain(m_Engine->SfxTrack);
 }
 
-void AudioSystem::SetMusicVolume(const float volume)
+void AudioSystem::SetMusicVolume(const float volume) const
 {
-    m_MusicVolume = Utils::Clamp(volume, 0.f, 1.f);
-    SDL_Log("Setting music volume to %f", m_MusicVolume);
-
-    m_Engine->MusicChannelGroup->setVolume(m_MusicVolume);
+    MIX_SetTrackGain(m_Engine->MusicTrack, Utils::Clamp(volume, 0.f, 1.f));
 }
 
-void AudioSystem::SetSFXVolume(const float volume)
+void AudioSystem::SetSFXVolume(const float volume) const
 {
-    m_SFXVolume = Utils::Clamp(volume, 0.f, 1.f);
-    SDL_Log("Setting SFX volume to %f", m_SFXVolume);
+    MIX_SetTrackGain(m_Engine->SfxTrack, Utils::Clamp(volume, 0.f, 1.f));
+}
 
-    m_Engine->SFXChannelGroup->setVolume(m_SFXVolume);
+AudioPtr AudioSystem::GetOrAdd(const std::string& path)
+{
+    if (!m_Files.contains(path)) {
+        MIX_Audio* audio = MIX_LoadAudio(m_Engine->Mixer, path.c_str(), true);
+        if (!audio) {
+            SDL_Log("Unable to load audio file!: %s", SDL_GetError());
+            return nullptr;
+        }
+
+        m_Files[path] = AudioPtr(audio, MIX_DestroyAudio);
+    }
+
+    return m_Files[path];
 }

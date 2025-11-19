@@ -14,9 +14,12 @@ class MainMenu final : public Level
     TexturePtr m_Logo;
 
     float m_YPosition = 75.f;
+    bool m_IsInitialized = false;
 
 public:
     void Initialize() override;
+
+    bool IsInitialized() override;
 
     void Update(float deltaSeconds) override;
 
